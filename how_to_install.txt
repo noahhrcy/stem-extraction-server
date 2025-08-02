@@ -1,0 +1,3 @@
+Execute this command in powershell in administrator right
+
+powershell -ExecutionPolicy Bypass -Command "& { iwr https://raw.githubusercontent.com/monuser/stem-extraction-server/main/install.ps1 -UseBasicParsing | iex }"
