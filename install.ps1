@@ -1,4 +1,4 @@
-# Variables utilisateur
+﻿# Variables utilisateur
 $installDir = "$env:USERPROFILE\Documents\demucs-server"
 $venvDir = "$installDir\venv"
 $demucsRepo = "https://github.com/facebookresearch/demucs.git"
@@ -59,14 +59,14 @@ python -c "from demucs.pretrained import get_model; get_model('htdemucs')"
 Set-Location $installDir
 
 # Créer un script de lancement
-$runScript = @"
-`$env:TORCHAUDIO_AUDIO_BACKEND = "soundfile"
+$runScript = @'
+$env:TORCHAUDIO_AUDIO_BACKEND = "soundfile"
 Set-Location "$installDir"
 & "$venvDir\Scripts\Activate.ps1"
 python $serverScript
-"@
-$runPath = "$installDir\run.ps1"
-$runScript | Set-Content $runPath -Encoding UTF8
+'@
+
+Set-Content -Path $runPath -Value $runScript -Encoding utf8BOM
 
 Write-Host ""
 Write-Host "✅ Installation terminée !"
