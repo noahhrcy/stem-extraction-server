@@ -30,14 +30,12 @@ def process():
             tmpdir = Path(tmpdir)
             audio_path = tmpdir / "audio.mp3"
             yt_cmd = [
-                "yt-dlp",
-                "-x",
-                "--audio-format",
-                "mp3",
-                "-o",
-                str(audio_path),
-                f"ytsearch1:{track}",
-            ]
+            "yt-dlp",
+            "-f", "bestaudio",
+            "-o", str(audio_path.with_suffix(".webm")),
+            f"ytsearch1:{track}",
+            ]   
+
             subprocess.run(yt_cmd, check=True)
 
             stem_out = safe_path(track)
@@ -45,10 +43,12 @@ def process():
             demucs_cmd = [
             sys.executable,
             "-m", "demucs",
+            "--two-stems", "vocals",  # ← Ajout ici
             "-n", "htdemucs",
             "-o", str(stem_out),
-            str(audio_path),
-            ]
+            str(audio_path.with_suffix(".webm"))
+           ]
+
             print("Running:", " ".join(demucs_cmd))  # debug
             subprocess.run(demucs_cmd, check=True)
     except subprocess.CalledProcessError as e:
