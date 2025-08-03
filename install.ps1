@@ -4,6 +4,7 @@ $venvDir = "$installDir\venv"
 $demucsRepo = "https://github.com/facebookresearch/demucs.git"
 $serverScript = "server.py"
 $venvActivate = "$venvDir\Scripts\Activate.ps1"
+$runPath = "$installDir\run-server.ps1"
 
 Write-Host "Création du dossier d'installation dans $installDir"
 New-Item -ItemType Directory -Force -Path $installDir | Out-Null
@@ -59,12 +60,12 @@ python -c "from demucs.pretrained import get_model; get_model('htdemucs')"
 Set-Location $installDir
 
 # Créer un script de lancement
-$runScript = @'
-$env:TORCHAUDIO_AUDIO_BACKEND = "soundfile"
+$runScript = @"
+`$env:TORCHAUDIO_AUDIO_BACKEND = "soundfile"
 Set-Location "$installDir"
 & "$venvDir\Scripts\Activate.ps1"
 python $serverScript
-'@
+"@
 
 Set-Content -Path $runPath -Value $runScript -Encoding utf8BOM
 
@@ -72,6 +73,6 @@ Write-Host ""
 Write-Host "Installation terminée !"
 Write-Host "Pour lancer le serveur :"
 Write-Host "   Ouvrir PowerShell et exécuter :"
-Write-Host "   `powershell -ExecutionPolicy Bypass -File $runPath`"
+Write-Host "   powershell -ExecutionPolicy Bypass -File $runPath"
 Write-Host ""
 Write-Host "Serveur accessible sur : http://localhost:5000"
