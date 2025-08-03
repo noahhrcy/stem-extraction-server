@@ -5,6 +5,7 @@ import urllib.parse
 from pathlib import Path
 import os
 from flask import Flask, jsonify, request, send_from_directory, abort
+import sys  # au début du fichier
 
 app = Flask(__name__)
 STEMS_DIR = Path("stems")
@@ -42,13 +43,13 @@ def process():
             stem_out = safe_path(track)
             stem_out.mkdir(parents=True, exist_ok=True)
             demucs_cmd = [
-                "demucs",
-                "-n",
-                "htdemucs",
-                "-o",
-                str(stem_out),
-                str(audio_path),
+            sys.executable,
+            "-m", "demucs",
+            "-n", "htdemucs",
+            "-o", str(stem_out),
+            str(audio_path),
             ]
+            print("Running:", " ".join(demucs_cmd))  # debug
             subprocess.run(demucs_cmd, check=True)
     except subprocess.CalledProcessError as e:
         return jsonify(error=str(e)), 500
