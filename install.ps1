@@ -1,7 +1,6 @@
 # Variables utilisateur
 $installDir = "$env:USERPROFILE\Documents\demucs-server"
 $venvDir = "$installDir\venv"
-$customRepoBase = "https://raw.githubusercontent.com/noahhrcy/stem-extraction-server/main"
 $serverScript = "server.py"
 $venvActivate = "$venvDir\Scripts\Activate.ps1"
 $runPath = "$installDir\run-server.ps1"
@@ -14,63 +13,54 @@ Set-Location $installDir
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     Write-Host "Python non trouvé. Installation via winget..."
     winget install -e --id Python.Python.3
-    $env:Path += ";$env:LOCALAPPDATA\Microsoft\WindowsApps"
+
+    # Met à jour le PATH pour cette session
+    $pythonPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps"
+    if (-not ($env:PATH -like "*$pythonPath*")) {
+        $env:PATH += ";$pythonPath"
+    }
+
+    # Vérifie à nouveau
+    if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+        Write-Error "Python toujours non détecté. Redémarre PowerShell ou installe Python manuellement."
+        exit 1
+    }
 }
 
-# # Vérifier git (plus nécessaire mais conservé si besoin ailleurs)
-# if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-#     Write-Host "Git non trouvé. Installation..."
-#     winget install -e --id Git.Git
-# }
-
-# Vérifier yt-dlp
-if (-not (Get-Command yt-dlp -ErrorAction SilentlyContinue)) {
-    Write-Host "Téléchargement de yt-dlp.exe..."
-    Invoke-WebRequest "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe" -OutFile "$installDir\yt-dlp.exe"
-    $env:Path += ";$installDir"
-}
-
-# Vérifier ffmpeg
-if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
-    Write-Host "Installation de ffmpeg via winget..."
-    winget install -e --id Gyan.FFmpeg
-}
-
-# Créer un environnement virtuel
+# Créer l’environnement virtuel
 Write-Host "Création de l'environnement virtuel..."
+python -m ensurepip --upgrade
 python -m venv $venvDir
+
+if (-not (Test-Path $venvActivate)) {
+    Write-Error "L'environnement virtuel n'a pas été créé correctement."
+    exit 1
+}
+
+# Activer l’environnement virtuel
 & $venvActivate
 
-# Installer les packages Python nécessaires
+# Installer les dépendances Python
 Write-Host "Installation des packages Python nécessaires..."
-pip install --upgrade pip
-pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora-search soundfile
+python -m pip install --upgrade pip
+python -m pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora
 
-# Télécharger le modèle htdemucs
+# Préchargement du modèle
 Write-Host "Préchargement du modèle htdemucs..."
-python -c "from de  mucs.pretrained import get_model; get_model('htdemucs')"
+python -m demucs --list
 
-# Retour dans le dossier principal
-Set-Location $installDir
-
-# Télécharger server.py depuis ton repo GitHub
+# Télécharger server.py personnalisé
 Write-Host "Téléchargement du fichier server.py personnalisé..."
-Invoke-WebRequest "$customRepoBase/server.py" -OutFile "$installDir\$serverScript"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/noahhrcy/stem-extraction-server/main/server.py" -OutFile "$installDir\$serverScript"
 
-# Créer un script de lancement PowerShell
-$runScript = @"
-`$env:TORCHAUDIO_AUDIO_BACKEND = "soundfile"
-Set-Location "$installDir"
-& "$venvDir\Scripts\Activate.ps1"
-python $serverScript
-"@
+# Créer script de lancement
+@"
+`$env:Path = "$($venvDir)\Scripts;$env:Path"
+python "$installDir\$serverScript"
+"@ | Out-File -Encoding UTF8 -FilePath $runPath
 
-Set-Content -Path $runPath -Value $runScript -Encoding UTF8
-
-Write-Host ""
-Write-Host "Installation terminée !"
+Write-Host "`nInstallation terminée !"
 Write-Host "Pour lancer le serveur :"
 Write-Host "   Ouvrir PowerShell et exécuter :"
 Write-Host "   powershell -ExecutionPolicy Bypass -File `"$runPath`""
-Write-Host ""
-Write-Host "Serveur accessible sur : http://localhost:5000"
+Write-Host "`nServeur accessible sur : http://localhost:5000"
