@@ -44,13 +44,14 @@ python -m venv $venvDir
 # Installer les packages Python
 Write-Host "Installation des packages Python nécessaires..."
 pip install --upgrade pip
-pip install flask yt-dlp torchaudio
+pip install flask yt-dlp torchaudio==2.0.2
 
 # Cloner Demucs
 Write-Host "Clonage de Demucs..."
 git clone $demucsRepo
 Set-Location "$installDir\demucs"
 pip install -e .
+pip install dora-search
 
 # Télécharger le modèle htdemucs
 Write-Host "Préchargement du modèle htdemucs..."
@@ -67,12 +68,4 @@ Set-Location "$installDir"
 python $serverScript
 "@
 
-Set-Content -Path $runPath -Value $runScript -Encoding utf8BOM
-
-Write-Host ""
-Write-Host "Installation terminée !"
-Write-Host "Pour lancer le serveur :"
-Write-Host "   Ouvrir PowerShell et exécuter :"
-Write-Host "   powershell -ExecutionPolicy Bypass -File $runPath"
-Write-Host ""
-Write-Host "Serveur accessible sur : http://localhost:5000"
+Set-Content -Path $runPath -Value $runScript -Encoding UTF8
