@@ -44,11 +44,11 @@ python -m venv $venvDir
 # Installer les packages Python nécessaires
 Write-Host "Installation des packages Python nécessaires..."
 pip install --upgrade pip
-pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora-search
+pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora-search soundfile
 
 # Télécharger le modèle htdemucs
 Write-Host "Préchargement du modèle htdemucs..."
-python -c "from demucs.pretrained import get_model; get_model('htdemucs')"
+python -c "from de  mucs.pretrained import get_model; get_model('htdemucs')"
 
 # Retour dans le dossier principal
 Set-Location $installDir

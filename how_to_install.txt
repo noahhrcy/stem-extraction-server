@@ -1,3 +1,7 @@
 Execute this command in powershell in administrator right
 
 powershell -ExecutionPolicy Bypass -Command "& { iwr https://raw.githubusercontent.com/noahhrcy/stem-extraction-server/main/install.ps1 -UseBasicParsing | iex }"
+
+Then start the server with this command
+
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\demucs-server\run-server.ps1"
