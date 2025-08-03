@@ -1,4 +1,4 @@
-﻿# Variables utilisateur
+# Variables utilisateur
 $installDir = "$env:USERPROFILE\Documents\demucs-server"
 $venvDir = "$installDir\venv"
 $demucsRepo = "https://github.com/facebookresearch/demucs.git"
