@@ -2,6 +2,7 @@
 $installDir = "$env:USERPROFILE\Documents\demucs-server"
 $venvDir = "$installDir\venv"
 $demucsRepo = "https://github.com/facebookresearch/demucs.git"
+$customRepoBase = "https://raw.githubusercontent.com/noahhrcy/stem-extraction-server/main"
 $serverScript = "server.py"
 $venvActivate = "$venvDir\Scripts\Activate.ps1"
 $runPath = "$installDir\run-server.ps1"
@@ -26,7 +27,7 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 # Vérifier yt-dlp
 if (-not (Get-Command yt-dlp -ErrorAction SilentlyContinue)) {
     Write-Host "Téléchargement de yt-dlp.exe..."
-    Invoke-WebRequest https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe -OutFile "$installDir\yt-dlp.exe"
+    Invoke-WebRequest "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe" -OutFile "$installDir\yt-dlp.exe"
     $env:Path += ";$installDir"
 }
 
@@ -47,13 +48,14 @@ pip install --upgrade pip
 pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix
 
 # Cloner Demucs si nécessaire
-if (-not (Test-Path "$installDir\demucs")) {
+$demucsPath = "$installDir\demucs"
+if (-not (Test-Path $demucsPath)) {
     Write-Host "Clonage de Demucs..."
-    git clone $demucsRepo
+    git clone $demucsRepo $demucsPath
 } else {
     Write-Host "Le dossier 'demucs' existe déjà, clonage ignoré."
 }
-Set-Location "$installDir\demucs"
+Set-Location $demucsPath
 
 # Installer Demucs et ses dépendances
 pip install -e .
@@ -66,7 +68,11 @@ python -c "from demucs.pretrained import get_model; get_model('htdemucs')"
 # Retour dans le dossier principal
 Set-Location $installDir
 
-# Créer un script de lancement
+# Télécharger server.py depuis ton repo GitHub
+Write-Host "Téléchargement du fichier server.py personnalisé..."
+Invoke-WebRequest "$customRepoBase/server.py" -OutFile "$installDir\$serverScript"
+
+# Créer un script de lancement PowerShell
 $runScript = @"
 `$env:TORCHAUDIO_AUDIO_BACKEND = "soundfile"
 Set-Location "$installDir"
