@@ -1,7 +1,6 @@
 # Variables utilisateur
 $installDir = "$env:USERPROFILE\Documents\demucs-server"
 $venvDir = "$installDir\venv"
-$demucsRepo = "https://github.com/facebookresearch/demucs.git"
 $customRepoBase = "https://raw.githubusercontent.com/noahhrcy/stem-extraction-server/main"
 $serverScript = "server.py"
 $venvActivate = "$venvDir\Scripts\Activate.ps1"
@@ -18,7 +17,7 @@ if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     $env:Path += ";$env:LOCALAPPDATA\Microsoft\WindowsApps"
 }
 
-# Vérifier git
+# Vérifier git (plus nécessaire mais conservé si besoin ailleurs)
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Host "Git non trouvé. Installation..."
     winget install -e --id Git.Git
@@ -45,21 +44,7 @@ python -m venv $venvDir
 # Installer les packages Python nécessaires
 Write-Host "Installation des packages Python nécessaires..."
 pip install --upgrade pip
-pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix
-
-# Cloner Demucs si nécessaire
-$demucsPath = "$installDir\demucs"
-if (-not (Test-Path $demucsPath)) {
-    Write-Host "Clonage de Demucs..."
-    git clone $demucsRepo $demucsPath
-} else {
-    Write-Host "Le dossier 'demucs' existe déjà, clonage ignoré."
-}
-Set-Location $demucsPath
-
-# Installer Demucs et ses dépendances
-pip install -e .
-pip install dora-search
+pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora-search
 
 # Télécharger le modèle htdemucs
 Write-Host "Préchargement du modèle htdemucs..."
@@ -86,6 +71,6 @@ Write-Host ""
 Write-Host "Installation terminée !"
 Write-Host "Pour lancer le serveur :"
 Write-Host "   Ouvrir PowerShell et exécuter :"
-Write-Host "   powershell -ExecutionPolicy Bypass -File $runPath"
+Write-Host "   powershell -ExecutionPolicy Bypass -File `"$runPath`""
 Write-Host ""
 Write-Host "Serveur accessible sur : http://localhost:5000"
