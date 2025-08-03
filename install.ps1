@@ -41,15 +41,21 @@ Write-Host "Création de l'environnement virtuel..."
 python -m venv $venvDir
 & $venvActivate
 
-# Installer les packages Python
+# Installer les packages Python nécessaires
 Write-Host "Installation des packages Python nécessaires..."
 pip install --upgrade pip
-pip install flask yt-dlp torchaudio==2.0.2 numpy openunmix
+pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix
 
-# Cloner Demucs
-Write-Host "Clonage de Demucs..."
-git clone $demucsRepo
+# Cloner Demucs si nécessaire
+if (-not (Test-Path "$installDir\demucs")) {
+    Write-Host "Clonage de Demucs..."
+    git clone $demucsRepo
+} else {
+    Write-Host "Le dossier 'demucs' existe déjà, clonage ignoré."
+}
 Set-Location "$installDir\demucs"
+
+# Installer Demucs et ses dépendances
 pip install -e .
 pip install dora-search
 
