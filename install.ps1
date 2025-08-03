@@ -43,7 +43,7 @@ if (-not (Test-Path $venvActivate)) {
 # Installer les dépendances Python
 Write-Host "Installation des packages Python nécessaires..."
 python -m pip install --upgrade pip
-python -m pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora
+python -m pip install flask yt-dlp torchaudio==2.7.1 numpy openunmix demucs dora-search scikit-learn
 
 # Préchargement du modèle
 Write-Host "Préchargement du modèle htdemucs..."
