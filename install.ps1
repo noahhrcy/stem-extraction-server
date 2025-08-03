@@ -17,11 +17,11 @@ if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
     $env:Path += ";$env:LOCALAPPDATA\Microsoft\WindowsApps"
 }
 
-# Vérifier git (plus nécessaire mais conservé si besoin ailleurs)
-if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    Write-Host "Git non trouvé. Installation..."
-    winget install -e --id Git.Git
-}
+# # Vérifier git (plus nécessaire mais conservé si besoin ailleurs)
+# if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+#     Write-Host "Git non trouvé. Installation..."
+#     winget install -e --id Git.Git
+# }
 
 # Vérifier yt-dlp
 if (-not (Get-Command yt-dlp -ErrorAction SilentlyContinue)) {
