@@ -44,7 +44,7 @@ python -m venv $venvDir
 # Installer les packages Python
 Write-Host "Installation des packages Python nécessaires..."
 pip install --upgrade pip
-pip install flask yt-dlp torchaudio==2.0.2
+pip install flask yt-dlp torchaudio==2.0.2 numpy openunmix
 
 # Cloner Demucs
 Write-Host "Clonage de Demucs..."
@@ -69,3 +69,11 @@ python $serverScript
 "@
 
 Set-Content -Path $runPath -Value $runScript -Encoding UTF8
+
+Write-Host ""
+Write-Host "Installation terminée !"
+Write-Host "Pour lancer le serveur :"
+Write-Host "   Ouvrir PowerShell et exécuter :"
+Write-Host "   powershell -ExecutionPolicy Bypass -File $runPath"
+Write-Host ""
+Write-Host "Serveur accessible sur : http://localhost:5000"
